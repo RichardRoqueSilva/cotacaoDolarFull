@@ -15,6 +15,19 @@
     </mat-card-content>
   </mat-card>
 
+
+  <mat-card class="mb-4" *ngIf="menorCotacaoTextoCompleto && !isLoading">
+    <mat-card-header>
+      <mat-card-title>Menor Cotação da Lista</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+       <p class="current-quote">
+         {{ menorCotacaoTextoCompleto }}
+       </p>
+    </mat-card-content>
+  </mat-card>
+
+
   <mat-card class="mb-4">
     <mat-card-header>
       <mat-card-title>Buscar Histórico</mat-card-title>
@@ -35,12 +48,13 @@
           Mostrar apenas cotações menores que a atual
         </mat-checkbox>
 
-        <button mat-raised-button color="primary" type="submit" [disabled]="isLoading" (click)="getCotacaoPorPeriodo()">
+        <button mat-raised-button color="primary" type="submit" [disabled]="isLoading || isLoadingCurrent" (click)="getCotacaoPorPeriodo()">
           {{ isLoading ? 'Buscando...' : 'Pesquisar' }}
         </button>
       </div>
     </mat-card-content>
   </mat-card>
+
 
   <mat-card *ngIf="cotacaoPorPeriodoLista.length > 0 || isLoading">
      <mat-card-header>
@@ -64,13 +78,18 @@
           <ng-container matColumnDef="diferenca">
             <th mat-header-cell *matHeaderCellDef> Diferença vs Atual (R$) </th>
             <td mat-cell *matCellDef="let item" [ngClass]="getDiferencaClasses(item.diferenca)">
-              {{ item.diferenca }}
+              {{ item.diferenca !== 'N/A' ? item.diferenca : '-' }}
             </td>
           </ng-container>
 
           <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
           <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
         </table>
+
+         <div *ngIf="!isLoading && cotacaoPorPeriodoLista.length === 0" class="text-center p-3" style="color: #777; font-style: italic;">
+            Nenhuma cotação encontrada para o período e filtro selecionados.
+         </div>
+
       </mat-card-content>
   </mat-card>
 
